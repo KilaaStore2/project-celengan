@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celengan By Kilaa - Tabungan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .kilaa-theme { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="kilaa-theme p-10 text-center text-white shadow-2xl rounded-b-[40px]">
+        <h1 class="text-3xl font-extrabold tracking-tighter uppercase italic">Celengan By Kilaa</h1>
+        <p class="text-slate-400 text-sm mt-1">Wujudkan Impianmu Satu Persatu</p>
+    </div>
+
+    <div class="container mx-auto px-4 mt-[-40px]">
+        <div class="bg-white rounded-3xl shadow-xl p-8 text-center max-w-md mx-auto border border-slate-100">
+            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Total Saldo Kamu</span>
+            <div id="total-balance" class="text-5xl font-black text-slate-800 my-4">Rp 0</div>
+            
+            <div class="flex gap-2 mt-6">
+                <input type="number" id="amount-input" placeholder="Jumlah (Rp)..." class="border-2 border-slate-100 rounded-xl p-3 w-full focus:outline-none focus:border-blue-500 transition-all font-semibold">
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button onclick="updateBalance('add')" class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">💰 Tambah</button>
+                <button onclick="updateBalance('sub')" class="bg-slate-800 hover:bg-black text-white py-3 rounded-xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95">💸 Kurangi</button>
+            </div>
+        </div>
+
+        <div class="max-w-5xl mx-auto mt-12">
+            <div class="bg-white p-8 rounded-3xl shadow-lg mb-10 border border-slate-50">
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <span class="p-2 bg-blue-50 rounded-lg">🚀</span> Tambah Target Baru
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 ml-1">Nama Barang</label>
+                        <input type="text" id="wish-name" placeholder="Contoh: Keyboard" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 ml-1">Harga Target (Rp)</label>
+                        <input type="number" id="wish-price" placeholder="Contoh: 500000" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400 ml-1">URL Foto (Opsional)</label>
+                        <input type="text" id="wish-img" placeholder="https://link-foto.com" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+                <button onclick="addWishlist()" class="w-full mt-8 bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all">Simpan Target Wishlist</button>
+            </div>
+
+            <div id="wishlist-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // Load data dari LocalStorage saat buka web
+        let balance = parseInt(localStorage.getItem('kilaa_balance')) || 0;
+        let wishlists = JSON.parse(localStorage.getItem('kilaa_wishlist')) || [];
+
+        function saveToLocal() {
+            localStorage.setItem('kilaa_balance', balance);
