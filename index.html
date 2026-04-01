@@ -10,10 +10,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         body { font-family: 'Outfit', sans-serif; background-color: #f3f4f6; }
         .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .progress-bar-fill { transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .progress-bar-fill { transition: width 0.8s ease-in-out; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen pb-10">
 
     <nav class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
@@ -30,43 +30,130 @@
             <p class="text-gray-400 font-medium text-lg">Belum ada target tabungan.<br>Ayo mulai menabung sekarang!</p>
         </div>
 
-        <div id="wishlist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="wishlist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             </div>
     </main>
 
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-[100]">
-        <div class="glass-card w-full max-w-md rounded-3xl overflow-hidden shadow-2xl animate-scale-up">
-            <div class="bg-blue-600 p-6 text-white">
-                <h2 class="text-2xl font-bold">Buat Target Baru</h2>
-                <p class="text-blue-100 text-sm">Rencanakan tabunganmu dengan tepat.</p>
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 z-[100]">
+        <div class="glass-card w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl">
+            <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">Target Baru</h2>
+                    <p class="text-blue-100 text-xs">Ayo wujudkan impianmu!</p>
+                </div>
+                <button onclick="toggleModal()" class="text-white opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Barang</label>
-                    <input type="text" id="target-name" placeholder="Cth: iPhone 17" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Barang</label>
+                    <input type="text" id="target-name" placeholder="Cth: Sepatu Jordan" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-3 outline-none transition-all font-semibold">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Harga (Rp)</label>
-                        <input type="number" id="target-price" placeholder="Cth: 15000000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Harga (Rp)</label>
+                        <input type="number" id="target-price" placeholder="Cth: 2000000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-3 outline-none transition-all font-semibold">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nabung/Hari</label>
-                        <input type="number" id="target-daily" placeholder="Cth: 50000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nabung/Hari</label>
+                        <input type="number" id="target-daily" placeholder="Cth: 20000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-3 outline-none transition-all font-semibold">
                     </div>
                 </div>
-                
-                <div class="pt-4 flex gap-3">
-                    <button onclick="toggleModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold hover:bg-gray-200 transition">Batal</button>
-                    <button onclick="saveTarget()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition">Mulai Menabung</button>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Link Foto Barang (URL)</label>
+                    <input type="text" id="target-img" placeholder="https://link-gambar.com/foto.jpg" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-3 outline-none transition-all font-semibold">
                 </div>
+                
+                <button onclick="saveTarget()" class="w-full mt-4 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition">Simpan Target</button>
             </div>
         </div>
     </div>
 
     <script>
         let savings = JSON.parse(localStorage.getItem('kilaa_celengan')) || [];
+
+        function toggleModal() {
+            document.getElementById('modal').classList.toggle('hidden');
+        }
+
+        function saveTarget() {
+            const name = document.getElementById('target-name').value;
+            const price = parseInt(document.getElementById('target-price').value);
+            const daily = parseInt(document.getElementById('target-daily').value);
+            const img = document.getElementById('target-img').value || 'https://images.unsplash.com/photo-1554034483-04fda0d3507b?w=500&auto=format&fit=crop';
+
+            if (name && price && daily) {
+                const newTarget = {
+                    id: Date.now(),
+                    name,
+                    price,
+                    daily,
+                    img,
+                    current: 0,
+                    dateStarted: new Date().toLocaleDateString('id-ID')
+                };
+
+                savings.push(newTarget);
+                updateData();
+                toggleModal();
+                clearForm();
+            } else {
+                alert("Mohon isi minimal nama, harga, dan nabung harian!");
+            }
+        }
+
+        function updateData() {
+            localStorage.setItem('kilaa_celengan', JSON.stringify(savings));
+            render();
+        }
+
+        function clearForm() {
+            document.getElementById('target-name').value = '';
+            document.getElementById('target-price').value = '';
+            document.getElementById('target-daily').value = '';
+            document.getElementById('target-img').value = '';
+        }
+
+        function adjustMoney(id, type) {
+            const amount = prompt(type === 'add' ? "Berapa uang yang masuk?" : "Berapa uang yang ditarik?");
+            if (amount && !isNaN(amount)) {
+                const target = savings.find(s => s.id === id);
+                if (type === 'add') {
+                    target.current += parseInt(amount);
+                } else {
+                    if (target.current < amount) {
+                        alert("Saldo tabungan ini tidak cukup untuk ditarik!");
+                        return;
+                    }
+                    target.current -= parseInt(amount);
+                }
+                updateData();
+            }
+        }
+
+        function deleteTarget(id) {
+            if(confirm("Hapus target ini secara permanen?")) {
+                savings = savings.filter(s => s.id !== id);
+                updateData();
+            }
+        }
+
+        function render() {
+            const grid = document.getElementById('wishlist-grid');
+            const empty = document.getElementById('empty-state');
+            
+            if (savings.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = '';
+
+            savings.forEach(item => {
+                const progress = Math.min((item.current / item.price) * 100, 100).toFixed(0);
+                const remaining = item.        let savings = JSON.parse(localStorage.getItem('kilaa_celengan')) || [];
 
         function toggleModal() {
             const modal = document.getElementById('modal');
