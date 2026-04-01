@@ -3,66 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celengan By Kilaa - Tabungan Digital</title>
+    <title>Celengan By Kilaa - Tabungan Pintar</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        .kilaa-theme { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .progress-bar-fill { transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
     </style>
 </head>
-<body class="pb-20">
+<body class="bg-gray-100 min-h-screen">
 
-    <div class="kilaa-theme p-10 text-center text-white shadow-2xl rounded-b-[40px]">
-        <h1 class="text-3xl font-extrabold tracking-tighter uppercase italic">Celengan By Kilaa</h1>
-        <p class="text-slate-400 text-sm mt-1">Wujudkan Impianmu Satu Persatu</p>
-    </div>
+    <nav class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-extrabold tracking-tight italic">CELENGANKU</h1>
+            <button onclick="toggleModal()" class="bg-white text-blue-600 font-bold px-4 py-2 rounded-full text-sm shadow-md hover:bg-gray-100 transition">
+                <i class="fa-solid fa-plus"></i> Tambah Target
+            </button>
+        </div>
+    </nav>
 
-    <div class="container mx-auto px-4 mt-[-40px]">
-        <div class="bg-white rounded-3xl shadow-xl p-8 text-center max-w-md mx-auto border border-slate-100">
-            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Total Saldo Kamu</span>
-            <div id="total-balance" class="text-5xl font-black text-slate-800 my-4">Rp 0</div>
-            
-            <div class="flex gap-2 mt-6">
-                <input type="number" id="amount-input" placeholder="Jumlah (Rp)..." class="border-2 border-slate-100 rounded-xl p-3 w-full focus:outline-none focus:border-blue-500 transition-all font-semibold">
-            </div>
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="updateBalance('add')" class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">💰 Tambah</button>
-                <button onclick="updateBalance('sub')" class="bg-slate-800 hover:bg-black text-white py-3 rounded-xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95">💸 Kurangi</button>
-            </div>
+    <main class="container mx-auto px-4 py-8">
+        <div id="empty-state" class="hidden text-center py-20">
+            <img src="https://illustrations.popsy.co/blue/saving-money.svg" class="w-48 mx-auto mb-4 opacity-50">
+            <p class="text-gray-400 font-medium text-lg">Belum ada target tabungan.<br>Ayo mulai menabung sekarang!</p>
         </div>
 
-        <div class="max-w-5xl mx-auto mt-12">
-            <div class="bg-white p-8 rounded-3xl shadow-lg mb-10 border border-slate-50">
-                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                    <span class="p-2 bg-blue-50 rounded-lg">🚀</span> Tambah Target Baru
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-400 ml-1">Nama Barang</label>
-                        <input type="text" id="wish-name" placeholder="Contoh: Keyboard" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-400 ml-1">Harga Target (Rp)</label>
-                        <input type="number" id="wish-price" placeholder="Contoh: 500000" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-400 ml-1">URL Foto (Opsional)</label>
-                        <input type="text" id="wish-img" placeholder="https://link-foto.com" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:border-blue-500 outline-none">
-                    </div>
-                </div>
-                <button onclick="addWishlist()" class="w-full mt-8 bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all">Simpan Target Wishlist</button>
+        <div id="wishlist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
+    </main>
 
-            <div id="wishlist-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-[100]">
+        <div class="glass-card w-full max-w-md rounded-3xl overflow-hidden shadow-2xl animate-scale-up">
+            <div class="bg-blue-600 p-6 text-white">
+                <h2 class="text-2xl font-bold">Buat Target Baru</h2>
+                <p class="text-blue-100 text-sm">Rencanakan tabunganmu dengan tepat.</p>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Barang</label>
+                    <input type="text" id="target-name" placeholder="Cth: iPhone 17" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Harga (Rp)</label>
+                        <input type="number" id="target-price" placeholder="Cth: 15000000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Nabung/Hari</label>
+                        <input type="number" id="target-daily" placeholder="Cth: 50000" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-2xl p-4 outline-none transition-all font-semibold">
+                    </div>
+                </div>
+                
+                <div class="pt-4 flex gap-3">
+                    <button onclick="toggleModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold hover:bg-gray-200 transition">Batal</button>
+                    <button onclick="saveTarget()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition">Mulai Menabung</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Load data dari LocalStorage saat buka web
-        let balance = parseInt(localStorage.getItem('kilaa_balance')) || 0;
-        let wishlists = JSON.parse(localStorage.getItem('kilaa_wishlist')) || [];
+        let savings = JSON.parse(localStorage.getItem('kilaa_celengan')) || [];
 
-        function saveToLocal() {
-            localStorage.setItem('kilaa_balance', balance);
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveTarget() {
+            const name = document.getElementById('target-name').value;
+            const price = parseInt(document.getElementById('target-price').value);
+            const daily = parseInt(document.getElementById('target-daily').value);
+
+            if (name && price && daily) {
+                const newTarget = {
+                    id: Date.now(),
+                    name,
+                    price,
+                    daily,
+                    current: 0,
+                    dateStarted: new Date().toLocaleDateString('id-ID')
+                };
+
+                savings.push(newTarget);
+                updateData();
+                toggleModal();
+                clearForm();
+            } else {
+                alert("Mohon isi semua data!");
+            }
+        }
+
+        function updateData() {
+            localStorage.setItem('kilaa_celengan', JSON.stringify(savings));
+            render();
+        }
+
+        function clearForm() {
+            document.getElementById('target-name').value = '';
+            document.getElementById('target-price').value = '';
+            document.getElementById('target-daily').value = '';
+        }
+
+        function addMoney(id) {
+            const amount = prompt("Masukkan jumlah uang yang ditabung hari ini:");
+            if (amount && !isNaN(amount)) {
+                const target = savings.find(s => s.id === id);
+                target.current += parseInt(amount);
+                updateData();
+            }
+        }
+
+        function deleteTarget(id) {
+            if(confirm("Hapus target tabungan ini?")) {
+                savings = savings.filter(s => s.id !== id);
+                updateData();
+            }
+        }
+
+        function render() {
+            const grid = document.getElementById('wishlist-grid');
+            const empty = document.getElementById('empty-state');
+            
+            if (savings.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = '';
+
+            savings.forEach(item => {
+                const progress = Math.min((item.current / item.price) * 100, 100).toFixed(0);
+                const remaining = item.price - item.current;
+                const daysLeft = Math.ceil(remaining / item.daily);
+                const isFinished = item.current >= item.price;
+
+                grid.innerHTML += `
+                    <div class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-800 leading-tight">${item.name}</h3>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Mulai: ${item.dateStarted}</p>
+                            </div>
+                            <button onclick="deleteTarget(${item.id})" class="text-gray-300 hover:text-red-500 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-blue-600">Rp ${item.current.toLocaleString('id-ID')}</span>
+                                <span class="text-gray-300">Rp ${item.price.toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+                                <div class="bg-blue-500 h-full progress-bar-fill rounded-full" style="width: ${progress}%"></div>
+                            </div>
+                            <p class="text-right text-[10px] font-black text-blue-600 mt-2">${progress}% TERCAPAI</p>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-2xl p-4 flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter italic">Sisa Hari Lagi</p>
+                                <p class="text-2xl font-black text-blue-900">${isFinished ? 'SELESAI' : daysLeft + ' Hari'}</p>
+                            </div>
+                            <button onclick="addMoney(${item.id})" class="bg-blue-600 text-white w-12 h-12 rounded-xl shadow-lg shadow-blue-200 hover:scale-110 active:scale-95 transition-all">
+                                <i class="fa-solid fa-plus text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        render();
+    </script>
+</body>
+            </html>
